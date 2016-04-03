@@ -1,0 +1,11 @@
+export SMAN_APPEND_HISTORY=true
+export SMAN_SNIPPET_DIR="~/snippets"
+export SMAN_EXEC_CONFIRM=true
+
+s() {
+if [[ ${1} == "run" ]] || [[ ${1} == "r" ]]; then
+  eval "$(sman $@)"
+else
+  sman $@
+fi
+}
