@@ -1,6 +1,8 @@
 package sman
 
 import (
+	//"fmt"
+	"github.com/fatih/color"
 	"regexp"
 	"strings"
 )
@@ -11,12 +13,49 @@ type Snippet struct {
 	Placeholders                  []Placeholder
 }
 
+func (s *Snippet) DisplayCommand() (out string) {
+	out = s.Command
+	for _, p := range s.Placeholders {
+		for _, t := range p.Patterns {
+			out = strings.Replace(out, t,
+				p.DisplayName(), -1)
+		}
+	}
+	out = strings.TrimSpace(out)
+	return out
+}
+
+func (s *Snippet) DisplayTags() string {
+	if len(s.Tags) > 0 {
+		return strings.Join(s.Tags, " | ")
+	} else {
+		return "----"
+	}
+}
+
+func (s *Snippet) DisplayDesc() string {
+	return strings.Title(s.Desc)
+}
+
+func (s *Snippet) DisplayDo() string {
+	if len(s.Do) > 0 {
+		return strings.Title(s.Do)
+	} else {
+		return "----"
+	}
+}
+
+func (s *Snippet) DisplayFile() string {
+	magenta := color.New(color.FgMagenta).SprintFunc()
+	return magenta(s.File)
+}
+
 func (snippet *Snippet) SetInputs(inputs []string) {
 	for i, v := range inputs {
 		if i > len(snippet.Placeholders) {
 			return
 		}
-		snippet.Placeholders[i].Input = v
+		snippet.Placeholders[i].SetInput(v)
 	}
 }
 
@@ -54,7 +93,7 @@ func (s *Snippet) parseCommand() {
 	}
 }
 
-func initSnippets(snippetMap map[string]Snippet, file string, snippetDir string) (snippets SnippetSlice) {
+func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snippets SnippetSlice) {
 	for n, s := range snippetMap {
 		s.Name = n
 		s.File = file
@@ -62,7 +101,7 @@ func initSnippets(snippetMap map[string]Snippet, file string, snippetDir string)
 			s.Desc = "----"
 		}
 		if len(s.Command) == 0 {
-			c := SearchCommandFile(s.Name, snippetDir)
+			c := SearchCommandFile(s.Name, dir)
 			if len(c) > 0 {
 				s.Command = strings.TrimSpace(c)
 			} else {
@@ -75,30 +114,40 @@ func initSnippets(snippetMap map[string]Snippet, file string, snippetDir string)
 	return snippets
 }
 
-func (snippet *Snippet) DisplayCommand() (out string) {
-	out = snippet.Command
-	for _, p := range snippet.Placeholders {
-		for _, t := range p.Patterns {
-			out = strings.Replace(out, t,
-				p.DisplayName(), -1)
+func filterByTag(snippets SnippetSlice, tag string) (matched SnippetSlice) {
+	for _, s := range snippets {
+		if SliceContains(s.Tags, tag) {
+			matched = append(matched, s)
 		}
 	}
-	out = strings.TrimSpace(out)
-	return out
-}
-
-func SearchSnippetInFile(name string, file string, snippetDir string) SnippetSlice {
-	var snippets SnippetSlice
-	fullPath := FullSnippetPath(file, snippetDir)
-	snippets = initSnippets(UnmarshalFile(fullPath), file, snippetDir)
-	return FSearchSnippet(snippets, name)
-}
-
-func SearchSnippetInDir(name string, dir string) (matched SnippetSlice) {
-	for _, f := range YmlFiles(dir) {
-		matched = append(matched, SearchSnippetInFile(name, f, dir)...)
-	}
 	return matched
+}
+
+func snippetsInFile(file, dir string) (snippets SnippetSlice) {
+	matchedFile := CheckFileFlag(file, dir)
+	fullPath := FullSnippetPath(matchedFile, dir)
+	snippets = initSnippets(UnmarshalFile(fullPath), file, dir)
+	return snippets
+}
+
+func snippetsInDir(dir string) (snippets SnippetSlice) {
+	for _, f := range YmlFiles(dir) {
+		snippets = append(snippets, snippetsInFile(f, dir)...)
+	}
+	return snippets
+}
+
+func GetSnippets(name, file, dir, tag string) SnippetSlice {
+	var snippets SnippetSlice
+	if len(file) > 0 {
+		snippets = snippetsInFile(file, dir)
+	} else {
+		snippets = snippetsInDir(dir)
+	}
+	if len(tag) > 0 {
+		return filterByTag(snippets, tag)
+	}
+	return snippets
 }
 
 type SnippetSlice []Snippet
@@ -108,9 +157,18 @@ func (s SnippetSlice) Len() int {
 }
 
 func (s SnippetSlice) Less(a, b int) bool {
-	return s[a].Name < s[b].Name
+	return s[a].File+s[a].Name < s[b].File+s[b].Name
 }
 
 func (s SnippetSlice) Swap(a, b int) {
 	s[a], s[b] = s[b], s[a]
+}
+
+func SnippetNames(slice SnippetSlice) (names []string, snippetMap map[string]Snippet) {
+	snippetMap = make(map[string]Snippet)
+	for _, s := range slice {
+		names = append(names, s.Name)
+		snippetMap[s.Name] = s
+	}
+	return names, snippetMap
 }

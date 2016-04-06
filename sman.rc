@@ -1,4 +1,4 @@
-export SMAN_APPEND_HISTORY=true
+export SMAN_APPEND_HISTORY=false
 export SMAN_SNIPPET_DIR="~/snippets"
 export SMAN_EXEC_CONFIRM=true
 

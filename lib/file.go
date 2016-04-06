@@ -48,8 +48,8 @@ func UnmarshalFile(file string) (snippetsMap map[string]Snippet) {
 	}
 	err = yaml.Unmarshal(yamlFile, &snippetsMap)
 	if err != nil {
-		PrintlnError("Can't unmarshal file: " + file)
-		panic(err)
+		//PrintlnError("Can't unmarshal file: " + file)
+		return
 	}
 	return snippetsMap
 }

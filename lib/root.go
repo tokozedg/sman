@@ -2,12 +2,15 @@ package sman
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
 )
 
-var cfgFile string
+var (
+	cfgFile, fileFlag, tagFlag string
+)
 
 //RootCmd for cobra
 var RootCmd = &cobra.Command{
@@ -26,7 +29,9 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	RootCmd.SetOutput(os.Stderr)
+	RootCmd.PersistentFlags().BoolVarP(&color.NoColor, "no-color", "", false, "disable colors")
+	RootCmd.PersistentFlags().StringVarP(&fileFlag, "file", "f", "", "snippet file")
+	RootCmd.PersistentFlags().StringVarP(&tagFlag, "tags", "t", "", "tags filter")
 }
 
 func initConfig() {

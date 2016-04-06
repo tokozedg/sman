@@ -1,7 +1,9 @@
 package sman
 
 import (
-	"fmt"
+	//"fmt"
+	"github.com/fatih/color"
+	"strconv"
 	"strings"
 )
 
@@ -40,11 +42,40 @@ func SearchPlaceholder(in []Placeholder, n string) (i int, ok bool) {
 }
 
 func (p *Placeholder) DisplayName() string {
-	return fmt.Sprintf("%s[ %s ]%s", `\033[95m`, p.Name, "-")
+	c := color.New(color.FgCyan).SprintFunc()
+	return c("[", p.Name, "]")
+}
+
+func (p *Placeholder) DisplayOptions() string {
+	if len(p.Options) > 0 {
+		return strings.Join(p.Options, " | ")
+	}
+	return "----"
+}
+
+func (p *Placeholder) DisplayDesc() string {
+	if len(p.Desc) > 0 {
+		return strings.Title(p.Desc)
+	}
+	return "----"
 }
 
 func (p *Placeholder) AddPattern(pattern string) {
 	if !SliceContains(p.Patterns, pattern) {
 		p.Patterns = append(p.Patterns, pattern)
 	}
+}
+
+func (p *Placeholder) SetInput(input string) {
+	if len(p.Options) != 0 {
+		if len(input) == 0 {
+			input = p.Options[0]
+		} else if i, err := strconv.Atoi(input); err == nil {
+			if (i > 0) && (i <= len(p.Options)) {
+				i--
+				input = p.Options[i]
+			}
+		}
+	}
+	p.Input = input
 }

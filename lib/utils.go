@@ -45,12 +45,27 @@ func CheckFileFlag(file string, dir string) (f string) {
 		f = results[0]
 	default:
 		PrintError("Multiple file found. Choose one")
-		f = results[MakeChoise(results)]
+		//f = results[MakeChoice(results)]
 	}
 	return f
 }
 
-func MakeChoise(from []string) (result int) {
+func ChoicePrompt(from []string) (result string) {
+	for i, s := range from {
+		i++
+		var bs, be, sp string
+		if i == 1 {
+			bs = "["
+			be = "]"
+		} else {
+			bs = "("
+			be = ")"
+		}
+		if i != len(from) {
+			sp = " "
+		}
+		result += fmt.Sprintf("%s%v%s %s%s", bs, i, be, s, sp)
+	}
 	return result
 }
 
