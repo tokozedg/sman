@@ -1,0 +1,32 @@
+---
+tcpdump:port:
+  desc: listen traffic on port
+  do: copy
+  command: >
+    tcpdump -nqt -s 0 -A -i eth0 port <<port>>
+ngrep:port:
+  desc: ngrep to port
+  command: ngrep -W byline -d eth0 <<port>>
+smtp:server:
+  do: exec
+  desc: smtp server in python. Prints mails to stdout
+  command: python -m smtpd -n -c DebuggingServer localhost:1025
+tar:file:
+  do: exec
+  desc: create a gzipped archive
+  command: tar czvf <<out>>.tar.gz <<in>>
+service:disable:
+  desc: disable service on ubuntu
+  tags: ['ubuntu']
+  do: copy
+  command: sudo update-rc.d <<name>> disable
+curl:upload:
+  do: copy
+  command: >
+    curl --upload-file <<file>> https:::transfer.sh:<<file>>
+curl:ip:
+  do: exec
+  command: curl canhazip.com
+erb:validate:
+  do: exec
+  command: erb -P -x -T '-' <<file>> | ruby -c

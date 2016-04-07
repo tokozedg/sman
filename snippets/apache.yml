@@ -1,0 +1,4 @@
+---
+vhost:add:
+  do: copy
+  desc: create new vhost

@@ -1,0 +1,21 @@
+---
+attach:
+  desc: attach container
+  do: exec
+  command: docker attach --sig-proxy=false <<container>>
+rm:
+  desc: stop and remove cotainer
+  do: exec
+  command: docker stop <<container($(docker ps -a -q))>>; docker rm <<container>>
+inspect:
+  desc: inspect all running docker containers
+  do: exec
+  command: |
+    docker inspect --format "{{ .Name }} # {{ .NetworkSettings.IPAddress }} # {{ .NetworkSettings.Ports }}" $(docker ps -q) | tr -s '#' '\t' | column -t
+stop:
+  do: exec
+  command: docker stop <<container($(docker ps -a -q))>>;
+bash:
+  do: exec
+  desc: gain shell on container
+  command: docker exec -it <<container>> bash
