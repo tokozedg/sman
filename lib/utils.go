@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// ReadFromCli reads CLI input and return as string
 func ReadFromCli() string {
 	reader := bufio.NewReader(os.Stdin)
 	i, _ := reader.ReadString('\n')
@@ -15,26 +16,31 @@ func ReadFromCli() string {
 	return i
 }
 
+// PrintError prints interface to stderr
 func PrintError(line ...interface{}) {
 	for _, l := range line {
 		s := fmt.Sprint(l)
-		os.Stderr.WriteString(s)
+		_, _ = os.Stderr.WriteString(s)
 	}
 }
 
+// PrintlnError prints interface to stderr
 func PrintlnError(line ...interface{}) {
 	PrintError(line...)
 	PrintError("\n")
 }
 
+// DashLineError print dashes to stderr
 func DashLineError() {
 	PrintlnError("----")
 }
 
+// DashLine print dashes
 func DashLine() {
 	fmt.Println("----")
 }
 
+// CheckFileFlag returns best matched file
 func CheckFileFlag(file string, dir string) (f string) {
 	results := FSearchFileName(file, dir)
 	switch len(results) {
@@ -50,6 +56,7 @@ func CheckFileFlag(file string, dir string) (f string) {
 	return f
 }
 
+// ChoicePrompt return choice prompt from slice
 func ChoicePrompt(from []string) (result string) {
 	for i, s := range from {
 		i++
@@ -69,14 +76,17 @@ func ChoicePrompt(from []string) (result string) {
 	return result
 }
 
-func FullSnippetPath(file string, dir string) string {
+// FullYmlPath returns yml file absolute path
+func FullYmlPath(file string, dir string) string {
 	return dir + "/" + file + ".yml"
 }
 
+// BaseFileName returns file name from absolute path
 func BaseFileName(file string) string {
 	return strings.TrimSuffix(filepath.Base(file), ".yml")
 }
 
+// CheckError checks error
 func CheckError(e error, msg string) {
 	if e != nil {
 		PrintlnError(msg)
@@ -84,6 +94,7 @@ func CheckError(e error, msg string) {
 	}
 }
 
+// SliceContains checks if var exists in a slice
 func SliceContains(in []string, dst string) bool {
 	for _, i := range in {
 		if i == dst {

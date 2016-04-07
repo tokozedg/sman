@@ -1,7 +1,6 @@
 package sman
 
 import (
-	//"fmt"
 	"github.com/fatih/color"
 	"strconv"
 	"strings"
@@ -14,6 +13,7 @@ type Placeholder struct {
 	Patterns          []string
 }
 
+// ParseOptions reads options string and returns options slice variable
 func ParseOptions(in string) (options []string) {
 	split := strings.Split(in, ",")
 	// Loop Through Options, and check for escaped comma
@@ -32,6 +32,8 @@ func ParseOptions(in string) (options []string) {
 	return options
 }
 
+// SearchPlaceholder iterates through Placeholder slice,
+// matches name against patter. If found returns placeholder id in slice and bool
 func SearchPlaceholder(in []Placeholder, n string) (i int, ok bool) {
 	for i, p := range in {
 		if p.Name == n {
@@ -41,11 +43,13 @@ func SearchPlaceholder(in []Placeholder, n string) (i int, ok bool) {
 	return i, false
 }
 
+// DisplayName return placeholder name
 func (p *Placeholder) DisplayName() string {
 	c := color.New(color.FgCyan).SprintFunc()
 	return c("[", p.Name, "]")
 }
 
+// DisplayOptions return placeholder options
 func (p *Placeholder) DisplayOptions() string {
 	if len(p.Options) > 0 {
 		return strings.Join(p.Options, " | ")
@@ -53,6 +57,7 @@ func (p *Placeholder) DisplayOptions() string {
 	return "----"
 }
 
+// DisplayDesc return placeholder desc
 func (p *Placeholder) DisplayDesc() string {
 	if len(p.Desc) > 0 {
 		return strings.Title(p.Desc)
@@ -60,12 +65,14 @@ func (p *Placeholder) DisplayDesc() string {
 	return "----"
 }
 
+// AddPattern adds new pattern to Patterns slice if not exists
 func (p *Placeholder) AddPattern(pattern string) {
 	if !SliceContains(p.Patterns, pattern) {
 		p.Patterns = append(p.Patterns, pattern)
 	}
 }
 
+// SetInput sets input variable of Placeholder
 func (p *Placeholder) SetInput(input string) {
 	if len(p.Options) != 0 {
 		if len(input) == 0 {

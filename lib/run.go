@@ -62,7 +62,7 @@ func execute(cmd string, confirm bool) {
 }
 
 func requestInput(snippet *Snippet) {
-	for i, _ := range snippet.Placeholders {
+	for i := range snippet.Placeholders {
 		p := &snippet.Placeholders[i]
 		if len(p.Input) > 0 {
 			continue
@@ -120,7 +120,8 @@ func run(name string, inputs ...string) {
 	PrintlnError(snippet.Command)
 	if (!printFlag && copyFlag) || (!execFlag && snippet.Do == "copy") {
 		DashLineError()
-		clipboard.WriteAll(snippet.Command)
+		err := clipboard.WriteAll(snippet.Command)
+		CheckError(err, "Error while copying")
 		PrintlnError("Snippet Copied...")
 	}
 	if (!printFlag && execFlag) || (!copyFlag && snippet.Do == "exec") {

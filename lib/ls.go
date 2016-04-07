@@ -41,7 +41,8 @@ func doLs(pattern string) {
 			s.DisplayDesc())
 		fmt.Fprintln(w, line)
 	}
-	w.Flush()
+	err := w.Flush()
+	CheckError(err, "Flush error..")
 }
 
 // lsCmd represents the ls command

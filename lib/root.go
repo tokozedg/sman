@@ -22,7 +22,7 @@ var RootCmd = &cobra.Command{
 //Execute for cobra
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(os.Stderr, err)
+		fmt.Println(err)
 		os.Exit(-1)
 	}
 }
@@ -42,5 +42,5 @@ func initConfig() {
 	viper.AddConfigPath("$HOME")
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("sman")
-	viper.ReadInConfig()
+	_ = viper.ReadInConfig()
 }

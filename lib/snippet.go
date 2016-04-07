@@ -7,12 +7,14 @@ import (
 	"strings"
 )
 
+// Snippet struct
 type Snippet struct {
 	Desc, Command, Name, Do, File string
-	Tags                          []string `,flow`
+	Tags                          []string
 	Placeholders                  []Placeholder
 }
 
+//DisplayCommand returns snippet command
 func (s *Snippet) DisplayCommand() (out string) {
 	out = s.Command
 	for _, p := range s.Placeholders {
@@ -25,40 +27,44 @@ func (s *Snippet) DisplayCommand() (out string) {
 	return out
 }
 
+// DisplayTags returns snippet tags
 func (s *Snippet) DisplayTags() string {
 	if len(s.Tags) > 0 {
 		return strings.Join(s.Tags, " | ")
-	} else {
-		return "----"
 	}
+	return "----"
 }
 
+// DisplayDesc returns snippet desc
 func (s *Snippet) DisplayDesc() string {
 	return strings.Title(s.Desc)
 }
 
+// DisplayDo returns snippet do
 func (s *Snippet) DisplayDo() string {
 	if len(s.Do) > 0 {
 		return strings.Title(s.Do)
-	} else {
-		return "----"
 	}
+	return "----"
 }
 
+// DisplayFile returns snippet file
 func (s *Snippet) DisplayFile() string {
 	magenta := color.New(color.FgMagenta).SprintFunc()
 	return magenta(s.File)
 }
 
-func (snippet *Snippet) SetInputs(inputs []string) {
+// SetInputs sets Placeholders input from slice
+func (s *Snippet) SetInputs(inputs []string) {
 	for i, v := range inputs {
-		if i > len(snippet.Placeholders) {
+		if i > len(s.Placeholders) {
 			return
 		}
-		snippet.Placeholders[i].SetInput(v)
+		s.Placeholders[i].SetInput(v)
 	}
 }
 
+// ReplacePlaceholders replaces placeholders patterns with input
 func (s *Snippet) ReplacePlaceholders() {
 	for _, p := range s.Placeholders {
 		for _, pattern := range p.Patterns {
@@ -67,6 +73,7 @@ func (s *Snippet) ReplacePlaceholders() {
 	}
 }
 
+// parseCommand reads snippet command and set Placeholders value
 func (s *Snippet) parseCommand() {
 	r, err := regexp.Compile(`<<(\w+)(?:\((.*?)\))?(#.*?)?>>`)
 	CheckError(err, "Invalid regexp")
@@ -93,6 +100,7 @@ func (s *Snippet) parseCommand() {
 	}
 }
 
+// initSnippets initializes snippet variables after unmarshal
 func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snippets SnippetSlice) {
 	for n, s := range snippetMap {
 		s.Name = n
@@ -114,6 +122,7 @@ func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snipp
 	return snippets
 }
 
+// filterByTag filters snippet slice by tag
 func filterByTag(snippets SnippetSlice, tag string) (matched SnippetSlice) {
 	for _, s := range snippets {
 		if SliceContains(s.Tags, tag) {
@@ -123,13 +132,15 @@ func filterByTag(snippets SnippetSlice, tag string) (matched SnippetSlice) {
 	return matched
 }
 
+// snippetsInFile returns snippets slice in file
 func snippetsInFile(file, dir string) (snippets SnippetSlice) {
 	matchedFile := CheckFileFlag(file, dir)
-	fullPath := FullSnippetPath(matchedFile, dir)
+	fullPath := FullYmlPath(matchedFile, dir)
 	snippets = initSnippets(UnmarshalFile(fullPath), file, dir)
 	return snippets
 }
 
+// snippetsInDir returns snippets in dir
 func snippetsInDir(dir string) (snippets SnippetSlice) {
 	for _, f := range YmlFiles(dir) {
 		snippets = append(snippets, snippetsInFile(f, dir)...)
@@ -137,6 +148,7 @@ func snippetsInDir(dir string) (snippets SnippetSlice) {
 	return snippets
 }
 
+// GetSnippets return filtered SnippetSlice by flags
 func GetSnippets(name, file, dir, tag string) SnippetSlice {
 	var snippets SnippetSlice
 	if len(file) > 0 {
@@ -150,6 +162,7 @@ func GetSnippets(name, file, dir, tag string) SnippetSlice {
 	return snippets
 }
 
+// SnippetSlice for sorting
 type SnippetSlice []Snippet
 
 func (s SnippetSlice) Len() int {
@@ -164,6 +177,8 @@ func (s SnippetSlice) Swap(a, b int) {
 	s[a], s[b] = s[b], s[a]
 }
 
+// SnippetNames return snippet names slice and a map to access
+// Snippet instance by name
 func SnippetNames(slice SnippetSlice) (names []string, snippetMap map[string]Snippet) {
 	snippetMap = make(map[string]Snippet)
 	for _, s := range slice {

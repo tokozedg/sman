@@ -34,7 +34,8 @@ func showSnippets(slice SnippetSlice) {
 			fmt.Fprintln(w, "\t\t\t\t\tDesc:\t"+p.DisplayDesc())
 		}
 	}
-	w.Flush()
+	err := w.Flush()
+	CheckError(err, "Flush error...")
 }
 
 func show(name string) {

@@ -1,7 +1,6 @@
 package sman
 
 import (
-	//"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -10,6 +9,7 @@ import (
 	"strings"
 )
 
+// ExpandPath receives path string and extracts to absolute path
 func ExpandPath(p string) string {
 	if filepath.IsAbs(p) {
 		return p
@@ -20,11 +20,13 @@ func ExpandPath(p string) string {
 	return p
 }
 
+// ReadFile reads file and returns string content
 func ReadFile(file string) string {
 	c, _ := ioutil.ReadFile(file)
 	return string(c)
 }
 
+// YmlFiles return slice of yml files in a dir
 func YmlFiles(dir string) (files []string) {
 	fio, _ := ioutil.ReadDir(dir)
 	for _, f := range fio {
@@ -37,6 +39,8 @@ func YmlFiles(dir string) (files []string) {
 	return files
 }
 
+// UnmarshalFile reads file and returns snippet objects map
+// where name is the map key and Snippet is the value
 func UnmarshalFile(file string) (snippetsMap map[string]Snippet) {
 	yamlFile, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -45,7 +49,6 @@ func UnmarshalFile(file string) (snippetsMap map[string]Snippet) {
 	}
 	err = yaml.Unmarshal(yamlFile, &snippetsMap)
 	if err != nil {
-		//PrintlnError("Can't unmarshal file: " + file)
 		return
 	}
 	return snippetsMap

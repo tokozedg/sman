@@ -1,11 +1,12 @@
 package sman
 
 import (
-	//"fmt"
 	"github.com/renstrom/fuzzysearch/fuzzy"
 	"sort"
 )
 
+// topsFromRanks iterates through fuzzy.Ranks and returns results
+// whith the best distance
 func topsFromRanks(ranks fuzzy.Ranks) (matched []string) {
 	if len(ranks) == 0 {
 		return matched
@@ -22,12 +23,15 @@ func topsFromRanks(ranks fuzzy.Ranks) (matched []string) {
 	return matched
 }
 
+//FSearchFileName fuzzy searches pattern within available files in a dir
 func FSearchFileName(pattern string, dir string) (matched []string) {
 	files := YmlFiles(dir)
 	ranks := fuzzy.RankFind(pattern, files)
 	return topsFromRanks(ranks)
 }
 
+// FSearchSnippet fuzzy searches pattern in a SnippetSlice
+// which returns SnippetSlice containing only top ranked snippets
 func FSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
 	names, snippetMap := SnippetNames(snippets)
 	ranks := fuzzy.RankFind(pattern, names)
