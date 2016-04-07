@@ -11,8 +11,8 @@ CLI Snippet Manager
 Add to your rc:
 
 ```
-[ -f $GOPATH/src/github.com/tokozedg/sman/sman.rc  ] && source $GOPATH/src/github.com/tokozedg/sman/sman.rc                                                                  ```
-
+[ -f $GOPATH/src/github.com/tokozedg/sman/sman.rc  ] && source $GOPATH/src/github.com/tokozedg/sman/sman.rc
+```
 Optionally copy sample snippets:
 ```
 cp -r $GOPATH/src/github.com/tokozedg/sman/snippets ~/
