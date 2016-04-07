@@ -20,12 +20,9 @@ func ExpandPath(p string) string {
 	return p
 }
 
-func SearchCommandFile(name string, dir string) (content string) {
-	p := FullCommandPath(name, dir)
-	d, e := ioutil.ReadFile(p)
-	CheckError(e, "Can't open command file: "+p)
-	content = string(d)
-	return content
+func ReadFile(file string) string {
+	c, _ := ioutil.ReadFile(file)
+	return string(c)
 }
 
 func YmlFiles(dir string) (files []string) {

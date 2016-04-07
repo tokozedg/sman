@@ -73,9 +73,6 @@ func FullSnippetPath(file string, dir string) string {
 	return dir + "/" + file + ".yml"
 }
 
-func FullCommandPath(name string, dir string) string {
-	return dir + "/commands/" + name
-}
 func BaseFileName(file string) string {
 	return strings.TrimSuffix(filepath.Base(file), ".yml")
 }
