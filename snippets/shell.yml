@@ -21,9 +21,10 @@ service:disable:
   do: copy
   command: sudo update-rc.d <<name>> disable
 curl:upload:
-  do: copy
+  do: exec
   command: >
-    curl --upload-file <<file>> https:::transfer.sh:<<file>>
+    gpg -c <<file>>;
+    curl --upload-file <<file>>.gpg https://transfer.sh/<<file>>.gpg
 curl:ip:
   do: exec
   command: curl canhazip.com
