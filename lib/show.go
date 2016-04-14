@@ -46,22 +46,19 @@ func show(name string) {
 }
 
 var showCmd = &cobra.Command{
-	Use:     "show <snippet>",
+	Use:     "show [-f FILE] [-t TAG] SNIPPET",
 	Aliases: []string{"s"},
 	Short:   "Show snippet details",
 	Long: `
-Show all snippet details matching name or file.
-
-Use tags flag to filter snippets by tag. Seperate multiple tags with comma.
-Used when file is not defined and multiple snippets exists with the same name.
+Show snippet details.
 
 Examples:
-s show alias/add -t bash
+s show alias:add -t shell
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			fmt.Println("Show what?")
+			fmt.Println("need snippet name...")
 			os.Exit(1)
 		}
 		show(args[0])

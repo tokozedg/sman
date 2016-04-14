@@ -47,23 +47,19 @@ func doLs(pattern string) {
 
 // lsCmd represents the ls command
 var lsCmd = &cobra.Command{
-	Use:     "ls <pattern>",
+	Use:     "ls [-f FILE] [-t TAGS] [PATTERN]",
 	Aliases: []string{"l"},
-	Short:   "List or search in all available snippets",
+	Short:   "List and search pattern in all available snippets",
 	Long: `
-List or search in all available snippets.
+List and search pattern in all available snippets,
 
-<pattern>
-Uses regexp. Pattern is matched against snippet name, description and command.
+PATTERN is regexp matched against snippet name, description and command.
 
 Examples:
-s ls docker
-	- Show all snippet matching "docker"
+s ls add
+	- List all snippet matching pattern "add"
 s ls -f docker
-	- Show all snippets in file "docker.yml"
-s ls -t docker,cli
-	- Show all snippets tagged with "docker" OR "cli"
-
+	- List all snippets in file 'docker'
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var p string

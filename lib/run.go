@@ -133,23 +133,24 @@ func run(name string, inputs ...string) {
 }
 
 var runCmd = &cobra.Command{
-	Use:     "run <snippet> [<placeholder1>] [<placeholder2>]...",
+	Use:     "run [-f FILE] [-f TAG] SNIPPET [PLACEHOLDER VALUES...] [-cxp]",
 	Aliases: []string{"r"},
 	Short:   "Run snippet",
 	Long: `
-Run snippet and execute action specified with flags or "do" variable
-in yml file. Flags action overrides "do" action defined in yml.
+Runs snippet and execute action specified with flags or snippet "do".
+Flags action overrides "do".
 
 The next arguments after snippet name will be used to fill placeholder values.
+The first argument will be considered as a first placeholder input.
 Use "s show <snippet>" to get placeholder order numbers.
 
 Examples:
-s run -f mysql db/dump -x
-	- run db/dump snippet from file mysql and execute when done
+s run -f mysql db:dump -x
+	- run 'db:dump' snippet from file 'mysql' and execute when done
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			PrintlnError("Run what?")
+			PrintlnError("need snippet name...")
 			os.Exit(1)
 		}
 		run(args[0], args[1:]...)
