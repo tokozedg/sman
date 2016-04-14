@@ -10,7 +10,7 @@ A command-line snippet manager in Go
 
 * Build with Go
 ```bash
-go get -v https://github.com/tokozedg/sman
+go get -v github.com/tokozedg/sman
 ```
 
 * Add to your rc:
@@ -41,7 +41,7 @@ smtp:server: # snippet name
 tcpdump:port:
   do: copy
   desc: listen traffic on port
-  command: tcpdump -nqt -s 0 -A -i eth0 port <<port>> 
+  command: tcpdump -nqt -s 0 -A -i eth0 port <<port>>
 ```
 
 ```yaml
@@ -49,7 +49,7 @@ tcpdump:port:
 # To execute multiline commands, separate lines by semi-colon
 curl:upload:
   do: exec
-  command: > 
+  command: >
     gpg -c <<file>>;
     curl --upload-file <<file>>.gpg https://transfer.sh/<<file>>.gpg
 ```
@@ -72,14 +72,14 @@ curl:upload:
 
 ###Run snippet
 ```bash
-s run [-f <FILE>]  [-t <TAG>] <SNIPPET> [placeholder values...] [-cxp] 
+s run [-f <FILE>]  [-t <TAG>] <SNIPPET> [placeholder values...] [-cxp]
 ```
 ```bash
-~|⇒ s run -f shell curl/upload test.tar.gz -x
+~|⇒ s run -f shell curl:upload test.tar.gz -x
 ----
 gpg -c test.tar.gz; curl --upload-file test.tar.gz.gpg https://transfer.sh/test.tar.gz.gpg
 ----
-Execute Snippet? [Y/n]: 
+Execute Snippet? [Y/n]:
 ```
 
 ###Show snippet
@@ -104,13 +104,13 @@ s ls [-f <FILE>] [-t <TAG>] [<PATTERN>]
 ----
 mysqldump -u[user] --lock-tables=[lock] -p[pass] -h [host] [database] > [database].sql
 ----
-[user]: 
+[user]:
 ```
 
 # Config
 ```bash
 # Append history can be useful to avoid re-entering all placeholders when you need to change single parameter.
-export SMAN_APPEND_HISTORY=false 
+export SMAN_APPEND_HISTORY=false
 # Snippet directory
 export SMAN_SNIPPET_DIR="~/snippets"
 # Ask confirmation before executing
