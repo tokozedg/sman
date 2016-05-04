@@ -1,0 +1,23 @@
+---
+node:remove:
+  do: copy
+  desc: remove node from puppet master
+  tags:
+    - enterprise
+  command: >
+    puppet node purge <<certname>>;
+    puppet agent -t;
+    service pe-puppetserver restart
+module:install:
+  do: copy
+  desc: install new module
+  command: >
+    puppet module install --environment <<env(development,staging,production)>> <<module>>
+epp:validate:
+  do: copy
+  desc: check syntax of EPP code
+  command: puppet epp validate <<file>>
+erb:validate:
+  do: exec
+  desc: check syntax of ERB code
+  command: erb -P -x -T '-' <<file>> | ruby -c

@@ -1,20 +1,20 @@
 ---
 user:add:
-  desc: create user for db
-  tags: ["sql","add"]
   do: copy
+  desc: create user for database
   command: >
     GRANT
-    <<priv(all privileges,select,select\,update\,insert\,delete)>>
-    ON <<db>>.* TO <<user>>@'<<ip(%,localhost)>>' IDENTIFIED BY '<<pass>>';
-    FLUSH PRIVILEGES;
+    <<priv(all privileges,select,select\,update\,insert\,delete)>> ON
+     <<db>>.* TO <<user>>@'<<ip(%,localhost)>>' IDENTIFIED BY '<<pass>>';
+     FLUSH PRIVILEGES;
 database:dump:
-  desc: dump database
   do: copy
-  command: |
-    mysqldump -u<<user>> --lock-tables=<<lock(true,false)>> -p<<pass>> -h <<host(localhost)>> <<database>> > <<database>>.sql
+  desc: dump database to file
+  command: >
+    mysqldump -u<<user>> --lock-tables=<<lock(true,false)>>
+     -p<<pass>> -h <<host(localhost)>> <<database>> > <<database>>.sql
 ngrep:query:
-  desc: ngrep mysql select queries (non socket only)
   do: copy
-  command: |
-    ngrep -d <<iface>> -i 'select' port 3306
+  desc: ngrep mysql queries (non socket only)
+  command: >
+    ngrep -d <<iface>> -i '<<pattern(select)>>' port 3306

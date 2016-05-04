@@ -1,0 +1,9 @@
+ssh-copy-id <<user>>@<<ip>>;
+if ! grep -Fxq "Host <<alias>>" ~/.ssh/config;
+then
+  echo "Host <<alias>>
+         HostName <<ip>>
+         Port 22
+         User <<user>>" >> ~/.ssh/config;
+fi
+
