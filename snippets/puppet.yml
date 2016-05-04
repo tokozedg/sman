@@ -4,7 +4,7 @@ node:remove:
   desc: remove node from puppet master
   tags:
     - enterprise
-  command: >
+  command: |
     puppet node purge <<certname>>;
     puppet agent -t;
     service pe-puppetserver restart

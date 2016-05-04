@@ -3,16 +3,15 @@ user:add:
   do: copy
   desc: create user for database
   command: >
-    GRANT
-    <<priv(all privileges,select,select\,update\,insert\,delete)>> ON
-     <<db>>.* TO <<user>>@'<<ip(%,localhost)>>' IDENTIFIED BY '<<pass>>';
-     FLUSH PRIVILEGES;
+    GRANT <<priv(all privileges,select,select\,update\,insert\,delete)>> ON
+    <<db>>.* TO <<user>>@'<<ip(%,localhost)>>' IDENTIFIED BY '<<pass>>';
+    FLUSH PRIVILEGES;
 database:dump:
   do: copy
   desc: dump database to file
   command: >
     mysqldump -u<<user>> --lock-tables=<<lock(true,false)>>
-     -p<<pass>> -h <<host(localhost)>> <<database>> > <<database>>.sql
+    -p<<pass>> -h <<host(localhost)>> <<database>> > <<database>>.sql
 ngrep:query:
   do: copy
   desc: ngrep mysql queries (non socket only)

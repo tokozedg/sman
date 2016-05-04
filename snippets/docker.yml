@@ -10,8 +10,9 @@ rm:
 inspect:
   do: exec
   desc: inspect ip/ports
-  command: |
-    docker inspect --format "{{ .Name }} # {{ .NetworkSettings.IPAddress }} # {{ .NetworkSettings.Ports }}" $(docker ps -q) | tr -s '#' '\t' | column -t
+  command: >
+    docker inspect --format "{{ .Name }} # {{ .NetworkSettings.IPAddress }}
+    # {{ .NetworkSettings.Ports }}" $(docker ps -q) | tr -s '#' '\t' | column -t
 stop:
   do: exec
   desc: stop single or all containers
