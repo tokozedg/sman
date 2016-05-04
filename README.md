@@ -6,7 +6,7 @@ A command-line snippet manager in Go
 [![asciicast](https://asciinema.org/a/2e04fxybyyo5ubjk42mk4yuop.png)](https://asciinema.org/a/2e04fxybyyo5ubjk42mk4yuop)
 
 
-# Building
+## Building
 
 * Build with Go
 ```bash
@@ -23,7 +23,7 @@ go get -v github.com/tokozedg/sman
 cp -r $GOPATH/src/github.com/tokozedg/sman/snippets ~/
 ```
 
-# Snippets Examples
+## Snippets Examples
 
 ```yaml
 #~/snippets/shell.yml
@@ -58,7 +58,7 @@ curl:upload:
 
 
 
-# Placeholders
+## Placeholders
 
 ```
 <<name(option1,option2)#Description>>
@@ -68,9 +68,10 @@ curl:upload:
 * You can have multiple placeholders with the same name. After input all of them will be replaced
 * Use `\` to escape comma in options
 
-# Usage Examples
+## Usage Examples
 
-###Run snippet
+### Run snippet
+
 ```bash
 s run [-f <FILE>]  [-t <TAG>] <SNIPPET> [placeholder values...] [-cxp]
 ```
@@ -82,7 +83,16 @@ gpg -c test.tar.gz; curl --upload-file test.tar.gz.gpg https://transfer.sh/test.
 Execute Snippet? [Y/n]:
 ```
 
-###Show snippet
+```bash
+~|⇒ s run curl:ip
+----
+curl canhazip.com
+----
+Execute Snippet? [Y/n]:
+```
+
+### Show snippet
+
 ```bash
 s show [-f <FILE>] [-t <TAG>] <SNIPPET>
 ```
@@ -95,10 +105,10 @@ s ls [-f <FILE>] [-t <TAG>] [<PATTERN>]
 * Pattern is matched against snippet name, command and description
 
 
-#Fuzzy search file and snippet name:
+## Fuzzy search file and snippet name:
 ```bash
 # `r` is alias for `run`
-# matches file `mysql` and snippet `db/dump`
+# matches file `mysql` and snippet `database:dump`
 
 ~|⇒ s r -f sql dmp
 ----
@@ -107,7 +117,7 @@ mysqldump -u[user] --lock-tables=[lock] -p[pass] -h [host] [database] > [databas
 [user]:
 ```
 
-# Config
+## Config
 ```bash
 # Append history can be useful to avoid re-entering all placeholders when you need to change single parameter.
 export SMAN_APPEND_HISTORY=false
@@ -116,4 +126,26 @@ export SMAN_SNIPPET_DIR="~/snippets"
 # Ask confirmation before executing
 export SMAN_EXEC_CONFIRM=true
 ```
+
+## vim-sman
+
+Install vim plugin for better snippets colors:
+
+*  [Pathogen](https://github.com/tpope/vim-pathogen)
+  * `git clone https://github.com/tokozedg/vim-sman.git ~/.vim/bundle/vim-sman`
+*  [vim-plug](https://github.com/junegunn/vim-plug)
+  * `Plug 'tokozedg/vim-sman'`
+*  [NeoBundle](https://github.com/Shougo/neobundle.vim)
+  * `NeoBundle 'tokozedg/vim-sman'`
+*  [Vundle](https://github.com/gmarik/vundle)
+  * `Plugin 'tokozedg/vim-sman'`
+
+## Contributing
+
+As I use this for my own projects, I know this might not be the perfect approach
+for all the projects out there. If you have any ideas, just
+[open an issue][issues] and tell me what you think.
+
+If you'd like to contribute, please fork the repository and make changes as
+you'd like. Pull requests are warmly welcome, especially if you make a good snippet file.
 
