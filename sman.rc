@@ -1,6 +1,7 @@
-export SMAN_APPEND_HISTORY=false
+export SMAN_APPEND_HISTORY=true
 export SMAN_SNIPPET_DIR="~/snippets"
 export SMAN_EXEC_CONFIRM=true
+export SMAN_SHELL=`ps -p $$ -ocomm=`
 
 s() {
 if [[ ${1} == "run" ]] || [[ ${1} == "r" ]]; then
