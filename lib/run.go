@@ -12,7 +12,7 @@ var (
 	copyFlag, execFlag, printFlag bool
 )
 
-func appendHistory(snippet Snippet) {
+func appendHistory(snippet Snippet, shell string) {
 	histLine := "s run " + snippet.Name
 	for _, p := range snippet.Placeholders {
 		if len(p.Input) == 0 {
@@ -30,10 +30,14 @@ func appendHistory(snippet Snippet) {
 			histLine += fmt.Sprintf(` "'%v'" `, arg)
 		}
 	}
-	// TODO bash and zsh versions differ
-	//sh = "history -s " + histLine + ";"
-
-	fmt.Println("print -s " + histLine + ";")
+	var c string
+	switch shell {
+	case "bash", "sh":
+		c = "history -s "
+	case "-zsh", "zsh":
+		c = "print -s "
+	}
+	fmt.Println(c + histLine + ";")
 }
 
 func executeConfirmed() bool {
@@ -109,6 +113,8 @@ func run(name string, inputs ...string) {
 		//snippet = chooseSnippet(matchedSnippets)
 	}
 	snippet.SetInputs(inputs)
+	//DashLineError()
+	//PrintlnError("-f ", snippet.File, " ", snippet.Name)
 	DashLineError()
 	if len(inputs) < len(snippet.Placeholders) {
 		PrintlnError(snippet.DisplayCommand())
@@ -128,7 +134,7 @@ func run(name string, inputs ...string) {
 		execute(snippet.Command, c.ExecConfirm)
 	}
 	if c.AppendHistory {
-		appendHistory(snippet)
+		appendHistory(snippet, c.Shell)
 	}
 }
 
