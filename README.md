@@ -1,5 +1,7 @@
 # Sman [![Build Status](https://travis-ci.org/tokozedg/sman.svg?branch=master)](https://travis-ci.org/tokozedg/sman)
 
+[![Join the chat at https://gitter.im/tokozedg/sman](https://badges.gitter.im/tokozedg/sman.svg)](https://gitter.im/tokozedg/sman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ***
 A command-line snippet manager in Go
 
