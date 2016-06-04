@@ -39,9 +39,9 @@ func appendHistory(snippet Snippet, shell string) {
 	}
 	var c string
 	switch shell {
-	case "bash", "sh":
+	case "bash", "sh", "/bin/bash":
 		c = "history -s "
-	case "-zsh", "zsh":
+	case "-zsh", "zsh", "/bin/zsh":
 		c = "print -s "
 	}
 	fmt.Println(c + histLine + ";")
