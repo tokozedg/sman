@@ -2,5 +2,5 @@
 oh-my-zsh:
   do: copy
   desc: install oh-my-zsh
-  command: >
+  command: |
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"

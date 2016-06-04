@@ -2,7 +2,7 @@
 alias:add:
   do: exec
   desc: add alias and reload rc
-  command: >
+  command: >-
     echo "alias <<alias>>='<<command>>'" >>
     ~/.bash_aliases; source ~/.bash_aliases
 user:group:

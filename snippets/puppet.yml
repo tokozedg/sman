@@ -8,10 +8,18 @@ node:remove:
     puppet node purge <<certname>>;
     puppet agent -t;
     service pe-puppetserver restart
+gem:install:
+  do: copy
+  desc: install gem for puppetmaster
+  tags:
+    - enterprise
+  command: |
+    /opt/puppet/bin/puppetserver gem install <<name>>;
+    service pe-puppetserver restart
 module:install:
   do: copy
   desc: install new module
-  command: >
+  command: |
     puppet module install --environment <<env(development,staging,production)>> <<module>>
 epp:validate:
   do: copy
