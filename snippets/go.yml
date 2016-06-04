@@ -1,0 +1,6 @@
+cover:html:
+  do: exec
+  desc: generate html report of test cover
+  command: >-
+    go test -coverprofile=cover.out;
+    go tool cover -html=cover.out
