@@ -1,8 +1,8 @@
 package sman
 
 import (
-	//"fmt"
-	"github.com/fatih/color"
+	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -14,7 +14,7 @@ type Snippet struct {
 	Placeholders                  []Placeholder
 }
 
-//DisplayCommand returns snippet command
+// DisplayCommand returns formatted command
 func (s *Snippet) DisplayCommand() (out string) {
 	out = s.Command
 	for _, p := range s.Placeholders {
@@ -27,34 +27,7 @@ func (s *Snippet) DisplayCommand() (out string) {
 	return out
 }
 
-// DisplayTags returns snippet tags
-func (s *Snippet) DisplayTags() string {
-	if len(s.Tags) > 0 {
-		return strings.Join(s.Tags, " | ")
-	}
-	return "----"
-}
-
-// DisplayDesc returns snippet desc
-func (s *Snippet) DisplayDesc() string {
-	return strings.Title(s.Desc)
-}
-
-// DisplayDo returns snippet do
-func (s *Snippet) DisplayDo() string {
-	if len(s.Do) > 0 {
-		return strings.Title(s.Do)
-	}
-	return "----"
-}
-
-// DisplayFile returns snippet file
-func (s *Snippet) DisplayFile() string {
-	magenta := color.New(color.FgMagenta).SprintFunc()
-	return magenta(s.File)
-}
-
-// SetInputs sets Placeholders input from slice
+// SetInputs receives slice of inputs and sets Placeholders inputs in the same order
 func (s *Snippet) SetInputs(inputs []string) {
 	for i, v := range inputs {
 		if i > len(s.Placeholders) {
@@ -64,7 +37,7 @@ func (s *Snippet) SetInputs(inputs []string) {
 	}
 }
 
-// ReplacePlaceholders replaces placeholders patterns with input
+// ReplacePlaceholders replaces placeholders patterns by placeholders input
 func (s *Snippet) ReplacePlaceholders() {
 	for _, p := range s.Placeholders {
 		for _, pattern := range p.Patterns {
@@ -73,10 +46,10 @@ func (s *Snippet) ReplacePlaceholders() {
 	}
 }
 
-// parseCommand reads snippet command and set Placeholders value
-func (s *Snippet) parseCommand() {
+// ParseCommand reads snippet command and creates Placeholders instance
+func (s *Snippet) ParseCommand() {
 	r, err := regexp.Compile(`<<(\w+)(?:\((.*?)\))?(#.*?)?>>`)
-	CheckError(err, "Invalid regexp")
+	checkError(err, "Invalid regexp")
 	m := r.FindAllStringSubmatch(s.Command, -1)
 	for _, v := range m {
 		pattern := v[0]
@@ -84,7 +57,7 @@ func (s *Snippet) parseCommand() {
 		options := v[2]
 		desc := v[3]
 		// If placeholder already exists
-		if i, ok := SearchPlaceholder(s.Placeholders, name); ok {
+		if i, ok := searchPlaceholder(s.Placeholders, name); ok {
 			s.Placeholders[i].AddPattern(pattern)
 		} else {
 			// Create new placeholder
@@ -92,7 +65,7 @@ func (s *Snippet) parseCommand() {
 			p.Name = name
 			p.Desc = desc
 			if len(options) > 0 {
-				p.Options = ParseOptions(options)
+				p.ParseOptions(options)
 			}
 			p.AddPattern(pattern)
 			s.Placeholders = append(s.Placeholders, p)
@@ -100,23 +73,21 @@ func (s *Snippet) parseCommand() {
 	}
 }
 
-// initSnippets initializes snippet variables after unmarshal
+// initSnippets initializes snippet after unmarshal
 func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snippets SnippetSlice) {
 	for n, s := range snippetMap {
 		s.Name = n
 		s.File = file
-		if len(s.Desc) == 0 {
-			s.Desc = "----"
-		}
 		if len(s.Command) == 0 {
-			c := ReadFile(dir + s.File + "/" + s.Name)
+			// Search command file
+			c, _ := ioutil.ReadFile(dir + s.File + "/" + s.Name)
 			if len(c) > 0 {
-				s.Command = strings.TrimSpace(c)
+				s.Command = strings.TrimSpace(string(c))
 			} else {
 				continue
 			}
 		}
-		s.parseCommand()
+		s.ParseCommand()
 		snippets = append(snippets, s)
 	}
 	return snippets
@@ -125,37 +96,47 @@ func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snipp
 // filterByTag filters snippet slice by tag
 func filterByTag(snippets SnippetSlice, tag string) (matched SnippetSlice) {
 	for _, s := range snippets {
-		if SliceContains(s.Tags, tag) {
+		if sliceContains(s.Tags, tag) {
 			matched = append(matched, s)
 		}
 	}
 	return matched
 }
 
-// snippetsInFile returns snippets slice in file
+// snippetsInFile returns snippet slice in file
 func snippetsInFile(file, dir string) (snippets SnippetSlice) {
-	matchedFile := CheckFileFlag(file, dir)
-	fullPath := FullYmlPath(matchedFile, dir)
-	snippets = initSnippets(UnmarshalFile(fullPath), file, dir)
+	fullPath := dir + "/" + file + ".yml"
+	snippets = initSnippets(unmarshalFile(fullPath), file, dir)
 	return snippets
 }
 
-// snippetsInDir returns snippets in dir
+// snippetsInDir returns snippet in dir
 func snippetsInDir(dir string) (snippets SnippetSlice) {
-	for _, f := range YmlFiles(dir) {
+	for _, f := range ymlFiles(dir) {
 		snippets = append(snippets, snippetsInFile(f, dir)...)
 	}
 	return snippets
 }
 
-// GetSnippets return filtered SnippetSlice by flags
-func GetSnippets(name, file, dir, tag string) SnippetSlice {
+func getSnippets(name, file, dir, tag string) SnippetSlice {
 	var snippets SnippetSlice
+	// file flag is defined. Use fuzzy search
 	if len(file) > 0 {
-		snippets = snippetsInFile(file, dir)
+		fileMatched := fSearchFileName(file, dir)
+		switch len(fileMatched) {
+		case 0:
+			printlnError("Unable to find any file with pattern: " + file)
+			os.Exit(1)
+		case 1:
+			snippets = snippetsInFile(fileMatched[0], dir)
+		default:
+			printError("Multiple files matched.")
+			os.Exit(1)
+		}
 	} else {
 		snippets = snippetsInDir(dir)
 	}
+	// filter snippets by tag
 	if len(tag) > 0 {
 		return filterByTag(snippets, tag)
 	}
@@ -175,15 +156,4 @@ func (s SnippetSlice) Less(a, b int) bool {
 
 func (s SnippetSlice) Swap(a, b int) {
 	s[a], s[b] = s[b], s[a]
-}
-
-// SnippetNames return snippet names slice and a map to access
-// Snippet instance by name
-func SnippetNames(slice SnippetSlice) (names []string, snippetMap map[string]Snippet) {
-	snippetMap = make(map[string]Snippet)
-	for _, s := range slice {
-		names = append(names, s.Name)
-		snippetMap[s.Name] = s
-	}
-	return names, snippetMap
 }

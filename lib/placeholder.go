@@ -1,7 +1,6 @@
 package sman
 
 import (
-	"github.com/fatih/color"
 	"strconv"
 	"strings"
 )
@@ -13,11 +12,24 @@ type Placeholder struct {
 	Patterns          []string
 }
 
-// ParseOptions reads options string and returns options slice variable
-func ParseOptions(in string) (options []string) {
+// DisplayName returns formatted name
+func (p *Placeholder) DisplayName() string {
+	return cyan("[" + p.Name + "]")
+}
+
+// AddPattern adds new pattern to Patterns slice if not exists
+func (p *Placeholder) AddPattern(pattern string) {
+	if !sliceContains(p.Patterns, pattern) {
+		p.Patterns = append(p.Patterns, pattern)
+	}
+}
+
+// ParseOptions splits string by comma and sets Options value
+func (p *Placeholder) ParseOptions(in string) {
 	split := strings.Split(in, ",")
-	// Loop Through Options, and check for escaped comma
+	// Loop through options, and check for escaped comma
 	var toAppend string
+	var op []string
 	for _, o := range split {
 		if o[len(o)-1:] == `\` {
 			toAppend += o[:len(o)-1]
@@ -26,53 +38,15 @@ func ParseOptions(in string) (options []string) {
 		} else {
 			toAppend += o
 		}
-		options = append(options, toAppend)
+		op = append(op, toAppend)
 		toAppend = ""
 	}
-	return options
+	p.Options = op
 }
 
-// SearchPlaceholder iterates through Placeholder slice,
-// matches name against patter. If found returns placeholder id in slice and bool
-func SearchPlaceholder(in []Placeholder, n string) (i int, ok bool) {
-	for i, p := range in {
-		if p.Name == n {
-			return i, true
-		}
-	}
-	return i, false
-}
-
-// DisplayName return placeholder name
-func (p *Placeholder) DisplayName() string {
-	c := color.New(color.FgCyan).SprintFunc()
-	return c("[", p.Name, "]")
-}
-
-// DisplayOptions return placeholder options
-func (p *Placeholder) DisplayOptions() string {
-	if len(p.Options) > 0 {
-		return strings.Join(p.Options, " | ")
-	}
-	return "----"
-}
-
-// DisplayDesc return placeholder desc
-func (p *Placeholder) DisplayDesc() string {
-	if len(p.Desc) > 0 {
-		return strings.Title(p.Desc)
-	}
-	return "----"
-}
-
-// AddPattern adds new pattern to Patterns slice if not exists
-func (p *Placeholder) AddPattern(pattern string) {
-	if !SliceContains(p.Patterns, pattern) {
-		p.Patterns = append(p.Patterns, pattern)
-	}
-}
-
-// SetInput sets input variable of Placeholder
+// SetInput sets input variable of Placeholder.
+// If input is string and Placeholder has options, we try to set option value.
+// The same way, if input is empty we try to set first option as input, assuming default value.
 func (p *Placeholder) SetInput(input string) {
 	if len(p.Options) != 0 {
 		if len(input) == 0 {
@@ -85,4 +59,14 @@ func (p *Placeholder) SetInput(input string) {
 		}
 	}
 	p.Input = input
+}
+
+// searchPlaceholder searches placeholder by name returning position and bool.
+func searchPlaceholder(in []Placeholder, n string) (i int, ok bool) {
+	for i, p := range in {
+		if p.Name == n {
+			return i, true
+		}
+	}
+	return i, false
 }

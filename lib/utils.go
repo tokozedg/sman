@@ -3,61 +3,63 @@ package sman
 import (
 	"bufio"
 	"fmt"
+	"github.com/fatih/color"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
-// ReadFromCli reads CLI input and return as string
-func ReadFromCli() string {
+// readFromCli reads CLI input and return string
+func readFromCli() string {
 	reader := bufio.NewReader(os.Stdin)
 	i, _ := reader.ReadString('\n')
 	i = strings.TrimSpace(i)
 	return i
 }
 
-// PrintError prints interface to stderr
-func PrintError(line ...interface{}) {
+func printError(line ...interface{}) {
 	for _, l := range line {
 		s := fmt.Sprint(l)
 		_, _ = os.Stderr.WriteString(s)
 	}
 }
 
-// PrintlnError prints interface to stderr
-func PrintlnError(line ...interface{}) {
-	PrintError(line...)
-	PrintError("\n")
+func printlnError(line ...interface{}) {
+	printError(line...)
+	printError("\n")
 }
 
-// DashLineError print dashes to stderr
-func DashLineError() {
-	PrintlnError("----")
+func dashLineError() {
+	printlnError("----")
 }
 
-// DashLine print dashes
-func DashLine() {
+func dashLine() {
 	fmt.Println("----")
 }
 
-// CheckFileFlag returns best matched file
-func CheckFileFlag(file string, dir string) (f string) {
-	results := FSearchFileName(file, dir)
-	switch len(results) {
-	case 0:
-		PrintlnError("Unable to find file: " + fileFlag)
-		os.Exit(1)
-	case 1:
-		f = results[0]
-	default:
-		PrintError("Multiple file found. Choose one")
-		//f = results[MakeChoice(results)]
+// displayString titles string or returns dashes if empty
+func displayString(s string) string {
+	if len(s) > 0 {
+		return strings.Title(s)
 	}
-	return f
+	return "----"
 }
 
-// ChoicePrompt return choice prompt from slice
-func ChoicePrompt(from []string) (result string) {
+// displaySlice joins slice and returns titled string or dashes if empty
+func displaySlice(s []string) string {
+	return displayString(strings.Join(s, " | "))
+}
+
+func magenta(s string) string {
+	m := color.New(color.FgMagenta).SprintFunc()
+	return m(s)
+}
+
+func cyan(s string) string {
+	c := color.New(color.FgCyan).SprintFunc()
+	return c(s)
+}
+
+func choicePrompt(from []string) (result string) {
 	for i, s := range from {
 		i++
 		var bs, be, sp string
@@ -76,26 +78,15 @@ func ChoicePrompt(from []string) (result string) {
 	return result
 }
 
-// FullYmlPath returns yml file absolute path
-func FullYmlPath(file string, dir string) string {
-	return dir + "/" + file + ".yml"
-}
-
-// BaseFileName returns file name from absolute path
-func BaseFileName(file string) string {
-	return strings.TrimSuffix(filepath.Base(file), ".yml")
-}
-
-// CheckError checks error
-func CheckError(e error, msg string) {
+func checkError(e error, msg string) {
 	if e != nil {
-		PrintlnError(msg)
+		printlnError(msg)
 		panic(e)
 	}
 }
 
-// SliceContains checks if var exists in a slice
-func SliceContains(in []string, dst string) bool {
+// sliceContains checks if string exists in slice
+func sliceContains(in []string, dst string) bool {
 	for _, i := range in {
 		if i == dst {
 			return true

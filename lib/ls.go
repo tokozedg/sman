@@ -12,7 +12,7 @@ import (
 
 func filterSnippets(p string, slice SnippetSlice) (matched SnippetSlice) {
 	r, err := regexp.Compile(p)
-	CheckError(err, "Invalid search pattern")
+	checkError(err, "Invalid search pattern")
 	for _, s := range slice {
 		if r.MatchString(s.Name) ||
 			r.MatchString(s.Command) ||
@@ -24,8 +24,8 @@ func filterSnippets(p string, slice SnippetSlice) (matched SnippetSlice) {
 }
 
 func doLs(pattern string) {
-	c := GetConfig()
-	snippets := GetSnippets(pattern, fileFlag, c.SnippetDir, tagFlag)
+	c := getConfig()
+	snippets := getSnippets(pattern, fileFlag, c.SnippetDir, tagFlag)
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 25, 2, 0, ' ', 0)
 	snippets = filterSnippets(pattern, snippets)
@@ -37,12 +37,12 @@ func doLs(pattern string) {
 			fmt.Fprintln(w, blue(s.File+":"))
 			prevFile = s.File
 		}
-		line := fmt.Sprintf("   %v\t[%v]\t%v", s.Name, s.DisplayTags(),
-			s.DisplayDesc())
+		line := fmt.Sprintf("   %v\t[%v]\t%v", s.Name, displaySlice(s.Tags),
+			displayString(s.Desc))
 		fmt.Fprintln(w, line)
 	}
 	err := w.Flush()
-	CheckError(err, "Flush error..")
+	checkError(err, "Flush error..")
 }
 
 // lsCmd represents the ls command

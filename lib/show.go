@@ -14,12 +14,12 @@ func showSnippets(slice SnippetSlice) {
 	w.Init(os.Stdout, 0, 4, 2, ' ', 0)
 	sort.Sort(slice)
 	for _, s := range slice {
-		fmt.Fprintln(w, s.DisplayFile())
-		DashLine()
+		fmt.Fprintln(w, magenta(s.File))
+		dashLine()
 		fmt.Fprintln(w, "\tName:\t"+s.Name)
-		fmt.Fprintln(w, "\tDesc:\t"+s.DisplayDesc())
-		fmt.Fprintln(w, "\tTags:\t"+s.DisplayTags())
-		fmt.Fprintln(w, "\tDo:\t"+s.DisplayDo())
+		fmt.Fprintln(w, "\tDesc:\t"+displayString(s.Desc))
+		fmt.Fprintln(w, "\tTags:\t"+displaySlice(s.Tags))
+		fmt.Fprintln(w, "\tDo:\t"+displayString(s.Do))
 		fmt.Fprintln(w, "\tCommand:\t")
 		fmt.Fprintln(w)
 		for _, l := range strings.Split(s.DisplayCommand(), "\n") {
@@ -30,18 +30,18 @@ func showSnippets(slice SnippetSlice) {
 			i++
 			n := fmt.Sprintf("\t\t\t[%v] %s", i, p.DisplayName())
 			fmt.Fprintln(w, n)
-			fmt.Fprintln(w, "\t\t\t\t\tOptions:\t"+p.DisplayOptions())
-			fmt.Fprintln(w, "\t\t\t\t\tDesc:\t"+p.DisplayDesc())
+			fmt.Fprintln(w, "\t\t\t\t\tOptions:\t"+displaySlice(p.Options))
+			fmt.Fprintln(w, "\t\t\t\t\tDesc:\t"+displayString(p.Desc))
 		}
 	}
 	err := w.Flush()
-	CheckError(err, "Flush error...")
+	checkError(err, "Flush error...")
 }
 
 func show(name string) {
-	c := GetConfig()
-	snippets := GetSnippets(name, fileFlag, c.SnippetDir, tagFlag)
-	matchedSnippets := FSearchSnippet(snippets, name)
+	c := getConfig()
+	snippets := getSnippets(name, fileFlag, c.SnippetDir, tagFlag)
+	matchedSnippets := fSearchSnippet(snippets, name)
 	showSnippets(matchedSnippets)
 }
 

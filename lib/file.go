@@ -9,29 +9,31 @@ import (
 	"strings"
 )
 
-// ExpandPath receives path string and extracts to absolute path
-func ExpandPath(p string) string {
+// baseFileName receives full path and returns file name without extension
+func baseFileName(file string) string {
+	return strings.TrimSuffix(filepath.Base(file), ".yml")
+}
+
+// expandPath receives path string and returns absolute path
+// such as expanding ~ to user home path.
+func expandPath(p string) string {
 	if filepath.IsAbs(p) {
 		return p
 	}
 	if len(p) > 2 && p[:2] == "~/" {
-		p = strings.Replace(p, "~", os.Getenv("HOME"), 1)
+		return strings.Replace(p, "~", os.Getenv("HOME"), 1)
 	}
+	p, err := filepath.Abs(p)
+	checkError(err, "Can find absolute path for: "+p)
 	return p
 }
 
-// ReadFile reads file and returns string content
-func ReadFile(file string) string {
-	c, _ := ioutil.ReadFile(file)
-	return string(c)
-}
-
-// YmlFiles return slice of yml files in a dir
-func YmlFiles(dir string) (files []string) {
+// ymlFiles returns slice of yml files names in a dir without extension
+func ymlFiles(dir string) (files []string) {
 	fio, _ := ioutil.ReadDir(dir)
 	for _, f := range fio {
 		if filepath.Ext(f.Name()) == ".yml" {
-			n := strings.TrimSuffix(f.Name(), ".yml")
+			n := baseFileName(f.Name())
 			files = append(files, n)
 		}
 	}
@@ -39,17 +41,12 @@ func YmlFiles(dir string) (files []string) {
 	return files
 }
 
-// UnmarshalFile reads file and returns snippet objects map
-// where name is the map key and Snippet is the value
-func UnmarshalFile(file string) (snippetsMap map[string]Snippet) {
+// unmarshalFile reads yml file and returns snippet objects map
+// where snippet name is the map key and Snippet instance is the value
+func unmarshalFile(file string) (snippetsMap map[string]Snippet) {
 	yamlFile, err := ioutil.ReadFile(file)
-	if err != nil {
-		PrintlnError("Can't read file: " + file + " for unmarshal")
-		os.Exit(1)
-	}
+	checkError(err, "Can't read file: "+file)
 	err = yaml.Unmarshal(yamlFile, &snippetsMap)
-	if err != nil {
-		return
-	}
+	checkError(err, "Can't unmarshal file: "+file)
 	return snippetsMap
 }

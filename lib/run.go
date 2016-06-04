@@ -48,15 +48,15 @@ func appendHistory(snippet Snippet, shell string) {
 }
 
 func executeConfirmed() bool {
-	DashLineError()
+	dashLineError()
 	msg := "Execute Snippet? [Y/n]: "
 	for {
-		PrintError(msg)
-		in := ReadFromCli()
-		if SliceContains([]string{
+		printError(msg)
+		in := readFromCli()
+		if sliceContains([]string{
 			"N", "n", "no", "NO"}, in) {
 			return false
-		} else if SliceContains([]string{
+		} else if sliceContains([]string{
 			"Y", "y", "yes", "Yes", "YES", ""}, in) {
 			return true
 		}
@@ -67,8 +67,8 @@ func execute(cmd string, confirm bool) {
 	if confirm && !executeConfirmed() {
 		return
 	}
-	DashLineError()
-	PrintlnError("Executing...")
+	dashLineError()
+	printlnError("Executing...")
 	fmt.Println(strings.TrimSpace(cmd))
 }
 
@@ -79,63 +79,50 @@ func requestInput(snippet *Snippet) {
 			continue
 		}
 		if len(p.Desc) > 0 {
-			PrintlnError(p.Desc)
+			printlnError(p.Desc)
 		}
-		PrintError(p.DisplayName())
+		printError(p.DisplayName())
 		if len(p.Options) > 0 {
-			PrintError(" ", ChoicePrompt(p.Options))
+			printError(" ", choicePrompt(p.Options))
 		}
-		PrintError(": ")
-		r := ReadFromCli()
+		printError(": ")
+		r := readFromCli()
 		p.SetInput(r)
 	}
 }
 
-//func chooseSnippet(from SnippetSlice) Snippet {
-//var choices []string
-//for _, s := range from {
-//k := s.File + ":" + s.Name
-//choices = append(choices, k)
-//}
-//PrintlnError(ChoicePrompt(choices))
-//c := ReadFromCli()
-//if c
-//return from[c]
-//}
-
 func run(name string, inputs ...string) {
-	c := GetConfig()
-	snippets := GetSnippets(name, fileFlag, c.SnippetDir, tagFlag)
-	matchedSnippets := FSearchSnippet(snippets, name)
+	c := getConfig()
+	snippets := getSnippets(name, fileFlag, c.SnippetDir, tagFlag)
+	matchedSnippets := fSearchSnippet(snippets, name)
 	var snippet Snippet
 	switch len(matchedSnippets) {
 	case 0:
-		PrintlnError("No snippets matched...")
+		printlnError("No snippets matched...")
 		os.Exit(1)
 	case 1:
 		snippet = matchedSnippets[0]
 	default:
-		PrintlnError("Multiple snippets matched...")
+		printlnError("Multiple snippets matched...")
 		os.Exit(1)
-		//snippet = chooseSnippet(matchedSnippets)
 	}
 	snippet.SetInputs(inputs)
-	//DashLineError()
-	//PrintlnError("-f ", snippet.File, " ", snippet.Name)
-	DashLineError()
+	//dashLineError()
+	//printlnError("-f ", snippet.File, " ", snippet.Name)
+	dashLineError()
 	if len(inputs) < len(snippet.Placeholders) {
-		PrintlnError(snippet.DisplayCommand())
-		DashLineError()
+		printlnError(snippet.DisplayCommand())
+		dashLineError()
 		requestInput(&snippet)
-		DashLineError()
+		dashLineError()
 	}
 	snippet.ReplacePlaceholders()
-	PrintlnError(snippet.Command)
+	printlnError(snippet.Command)
 	if (!printFlag && copyFlag) || (!execFlag && snippet.Do == "copy") {
-		DashLineError()
+		dashLineError()
 		err := clipboard.WriteAll(snippet.Command)
-		CheckError(err, "Error while copying")
-		PrintlnError("Snippet Copied...")
+		checkError(err, "Error while copying")
+		printlnError("Snippet Copied...")
 	}
 	if (!printFlag && execFlag) || (!copyFlag && snippet.Do == "exec") {
 		execute(snippet.Command, c.ExecConfirm)
@@ -163,7 +150,7 @@ s run -f mysql db:dump -x
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			PrintlnError("need snippet name...")
+			printlnError("need snippet name...")
 			os.Exit(1)
 		}
 		run(args[0], args[1:]...)

@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config object
+// Config file struct
 type Config struct {
 	SnippetDir, Shell          string
 	ExecConfirm, AppendHistory bool
@@ -16,9 +16,9 @@ func init() {
 	viper.SetDefault("exec_confirm", "true")
 }
 
-//GetConfig reads and return config struct
-func GetConfig() (c Config) {
-	c.SnippetDir = ExpandPath(viper.GetString("snippet_dir"))
+//getConfig reads config and returns struct
+func getConfig() (c Config) {
+	c.SnippetDir = expandPath(viper.GetString("snippet_dir"))
 	c.Shell = viper.GetString("shell")
 	c.AppendHistory = viper.GetBool("append_history")
 	c.ExecConfirm = viper.GetBool("exec_confirm")

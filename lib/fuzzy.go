@@ -23,20 +23,26 @@ func topsFromRanks(ranks fuzzy.Ranks) (matched []string) {
 	return matched
 }
 
-//FSearchFileName fuzzy searches pattern within available files in a dir
-func FSearchFileName(pattern string, dir string) (matched []string) {
-	files := YmlFiles(dir)
+//fSearchFileName fuzzy searches pattern within available files in a dir
+func fSearchFileName(pattern string, dir string) (matched []string) {
+	files := ymlFiles(dir)
 	ranks := fuzzy.RankFind(pattern, files)
 	return topsFromRanks(ranks)
 }
 
-// FSearchSnippet fuzzy searches pattern in a SnippetSlice
-// which returns SnippetSlice containing only top ranked snippets
-func FSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
-	names, snippetMap := SnippetNames(snippets)
-	ranks := fuzzy.RankFind(pattern, names)
-	for _, n := range topsFromRanks(ranks) {
-		matched = append(matched, snippetMap[n])
+// fSearchSnippet matches pattern to snippet name in SnippetSlice
+// returnes SnippetSlice of best matched snippets.
+func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
+	topRank := 100
+	for _, s := range snippets {
+		r := fuzzy.RankMatch(pattern, s.Name)
+		switch {
+		case r == topRank:
+			matched = append(matched, s)
+		case r != -1 && r < topRank:
+			matched = SnippetSlice{s}
+			topRank = r
+		}
 	}
 	return matched
 }
