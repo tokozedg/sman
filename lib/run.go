@@ -67,7 +67,6 @@ func execute(cmd string, confirm bool) {
 	if confirm && !executeConfirmed() {
 		return
 	}
-	dashLineError()
 	printlnError("Executing...")
 	fmt.Println(strings.TrimSpace(cmd))
 }
@@ -107,8 +106,6 @@ func run(name string, inputs ...string) {
 		os.Exit(1)
 	}
 	snippet.SetInputs(inputs)
-	//dashLineError()
-	//printlnError("-f ", snippet.File, " ", snippet.Name)
 	dashLineError()
 	if len(inputs) < len(snippet.Placeholders) {
 		printlnError(snippet.DisplayCommand())
@@ -118,17 +115,20 @@ func run(name string, inputs ...string) {
 	}
 	snippet.ReplacePlaceholders()
 	printlnError(snippet.Command)
-	if (!printFlag && copyFlag) || (!execFlag && snippet.Do == "copy") {
-		dashLineError()
+	dashLineError()
+	if c.AppendHistory {
+		appendHistory(snippet, c.Shell)
+	}
+	if printFlag {
+		return
+	}
+	if copyFlag || (!execFlag && snippet.Do == "copy") {
 		err := clipboard.WriteAll(snippet.Command)
 		checkError(err, "Error while copying")
 		printlnError("Snippet Copied...")
 	}
-	if (!printFlag && execFlag) || (!copyFlag && snippet.Do == "exec") {
+	if execFlag || (!copyFlag && snippet.Do == "exec") {
 		execute(snippet.Command, c.ExecConfirm)
-	}
-	if c.AppendHistory {
-		appendHistory(snippet, c.Shell)
 	}
 }
 
