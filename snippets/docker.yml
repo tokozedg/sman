@@ -5,7 +5,7 @@ attach:
   command: docker attach --sig-proxy=false <<container>>
 rm:
   do: exec
-  desc: stop and remove single or all cotainers
+  desc: stop and remove single or all containers
   command: docker stop <<container($(docker ps -a -q))>>; docker rm <<container>>
 inspect:
   do: exec
