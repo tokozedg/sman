@@ -138,7 +138,7 @@ Install vim plugin for better snippets colors:
   * `Plug 'tokozedg/vim-sman'`
 *  [NeoBundle](https://github.com/Shougo/neobundle.vim)
   * `NeoBundle 'tokozedg/vim-sman'`
-*  [Vundle](https://github.com/gmarik/vundle)
+*  [Vundle](https://github.com/VundleVim/Vundle.vim)
   * `Plugin 'tokozedg/vim-sman'`
 
 ## Contributing
