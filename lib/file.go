@@ -17,6 +17,7 @@ func baseFileName(file string) string {
 // expandPath receives path string and returns absolute path
 // such as expanding ~ to user home path.
 func expandPath(p string) string {
+	p = filepath.Clean(p)
 	if filepath.IsAbs(p) {
 		return p
 	}

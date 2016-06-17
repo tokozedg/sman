@@ -111,15 +111,34 @@ func TestInitSnippets(t *testing.T) {
 				Snippet{
 					Name:    "echo",
 					Command: "hello world",
-					File:    "file"},
+					File:    "file",
+				},
 			},
 		},
+		{"ext_command",
+			map[string]Snippet{"ext_command": Snippet{}},
+			"examples", testPath,
+			SnippetSlice{
+				Snippet{
+					Name:    "ext_command",
+					Command: "test command",
+					File:    "examples",
+				},
+			},
+		},
+		{"invalid snippet",
+			map[string]Snippet{"invalid_snippet": Snippet{}},
+			"examples", testPath,
+			SnippetSlice(nil),
+		},
 	}
+	makeTestFiles(t)
 	for _, tt := range tests {
 		if gotSnippets := initSnippets(tt.snippetMap, tt.file, tt.dir); !reflect.DeepEqual(gotSnippets, tt.wantSnippets) {
-			t.Errorf("%q. initSnippets() = %v, want %v", tt.name, gotSnippets, tt.wantSnippets)
+			t.Errorf("%q. initSnippets() = %#v, want %#v", tt.name, gotSnippets, tt.wantSnippets)
 		}
 	}
+	defer cleanTestFiles(t)
 }
 
 func TestFilterByTag(t *testing.T) {

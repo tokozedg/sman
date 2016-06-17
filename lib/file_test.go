@@ -31,7 +31,10 @@ var testFiles = []file{
         tags:
           - tag2
         command: echo <<fname>> <<lname>>
-		`},
+     ext_command:
+        do: copy`},
+	// Test command file read
+	{"examples/ext_command", "test command"},
 	// Junk file
 	{"junk", ""},
 }
@@ -39,7 +42,7 @@ var testFiles = []file{
 const testPath = "./testdata/"
 
 func makeTestFiles(t *testing.T) {
-	err := os.Mkdir(testPath, 0770)
+	err := os.MkdirAll(testPath+"/examples", 0770)
 	if err != nil {
 		t.Errorf("makeDir: %v", err)
 		return
@@ -67,6 +70,7 @@ func TestExpandPath(t *testing.T) {
 	}{
 		{"abs path", "/home/user/Documents", "/home/user/Documents"},
 		{"home", "~/snippets", os.Getenv("HOME") + "/snippets"},
+		{"cleaned", "/home//user/Documents/", "/home/user/Documents"},
 	}
 	for _, tt := range tests {
 		if got := expandPath(tt.p); got != tt.want {
@@ -89,7 +93,7 @@ func TestYmlFiles(t *testing.T) {
 			t.Errorf("%q. ymlFiles() = %v, want %v", tt.name, gotFiles, tt.wantFiles)
 		}
 	}
-	cleanTestFiles(t)
+	defer cleanTestFiles(t)
 }
 
 func TestUnmarshalFile(t *testing.T) {

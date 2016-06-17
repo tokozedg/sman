@@ -80,7 +80,7 @@ func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snipp
 		s.File = file
 		if len(s.Command) == 0 {
 			// Search command file
-			c, _ := ioutil.ReadFile(dir + s.File + "/" + s.Name)
+			c, _ := ioutil.ReadFile(dir + "/" + s.File + "/" + s.Name)
 			if len(c) > 0 {
 				s.Command = strings.TrimSpace(string(c))
 			} else {
