@@ -33,15 +33,17 @@ func fSearchFileName(pattern string, dir string) (matched []string) {
 // fSearchSnippet matches pattern to snippet name in SnippetSlice
 // returnes SnippetSlice of best matched snippets.
 func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
-	topRank := 100
+	topRank := -1
 	for _, s := range snippets {
 		r := fuzzy.RankMatch(pattern, s.Name)
 		switch {
-		case r == topRank:
-			matched = append(matched, s)
-		case r != -1 && r < topRank:
+		case r == -1:
+			continue
+		case topRank == -1 || r < topRank:
 			matched = SnippetSlice{s}
 			topRank = r
+		case r == topRank:
+			matched = append(matched, s)
 		}
 	}
 	return matched
