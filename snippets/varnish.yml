@@ -1,0 +1,5 @@
+---
+vcl:validate:
+  do: copy
+  desc: check VCL syntax
+  command: varnishd -C -f <<file(/etc/varnish/default.vcl)>>
