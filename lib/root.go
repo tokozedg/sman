@@ -12,10 +12,14 @@ var (
 	cfgFile, fileFlag, tagFlag string
 )
 
+const (
+	version = "0.1.0"
+)
+
 //RootCmd for cobra
 var RootCmd = &cobra.Command{
 	Use:   "sman",
-	Short: "CLI Snippet Manager",
+	Short: "CLI Snippet Manager (" + version + ")",
 	Long:  ``,
 }
 
