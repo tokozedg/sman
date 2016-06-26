@@ -5,7 +5,6 @@ import (
 	"github.com/atotto/clipboard"
 	"github.com/spf13/cobra"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -13,38 +12,18 @@ var (
 	copyFlag, execFlag, printFlag bool
 )
 
-func appendHistory(snippet Snippet, shell string) {
+func shellString(s string) string {
+	return `$'` + s + `'`
+}
+func appendHistory(snippet Snippet) {
 	histLine := "s run -f " + snippet.File + " " + snippet.Name
 	for _, p := range snippet.Placeholders {
 		if len(p.Input) == 0 {
 			return
 		}
-		arg := p.Input
-		w, _ := regexp.Compile(`\w+`)
-		// TODO Move Append History To Shell Function
-		switch {
-		case strings.Contains(p.Input, `'`):
-			// If Input Conaints ' - Choose Escaped Version
-			arg = strings.Replace(arg, `"`, `\"`, -1)
-			arg = strings.Replace(p.Input, `$`, `\$`, -1)
-			arg = strings.Replace(arg, `'`, `\\\\\'`, -1)
-			histLine += fmt.Sprintf(` $'$\'%v\'' `, arg)
-		case w.MatchString(arg):
-			// Input Needs No Quote
-			histLine += fmt.Sprintf(` "%v" `, arg)
-		default:
-			// Input With Quote
-			histLine += fmt.Sprintf(` "'%v'" `, arg)
-		}
+		histLine += " " + shellString(p.Input)
 	}
-	var c string
-	switch shell {
-	case "bash", "sh", "/bin/bash":
-		c = "history -s "
-	case "-zsh", "zsh", "/bin/zsh":
-		c = "print -s "
-	}
-	fmt.Println(c + histLine + ";")
+	fmt.Println("_append_history ", histLine)
 }
 
 func executeConfirmed() bool {
@@ -117,7 +96,7 @@ func run(name string, inputs ...string) {
 	printlnError(snippet.Command)
 	dashLineError()
 	if c.AppendHistory {
-		appendHistory(snippet, c.Shell)
+		appendHistory(snippet)
 	}
 	if printFlag {
 		return

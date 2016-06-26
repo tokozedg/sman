@@ -1,9 +1,47 @@
-export SMAN_SHELL=`ps -p $$ -ocomm=`
+# vim: set ft=sh:
 
 s() {
-if [[ ${1} == "run" ]] || [[ ${1} == "r" ]]; then
-  eval "$(sman $@)"
-else
-  sman $@
-fi
+  if [[ ${1} == "run" ]] || [[ ${1} == "r" ]]; then
+    eval "$(sman $@)"
+  else
+    sman $@
+  fi
+}
+
+_escaped_string(){
+  if [[ "$1" =~ ^[-:_[:alnum:]]*$ ]];
+  then
+    echo "$1"
+  elif [[ "$1" =~ ^[^\']*$ ]];
+  then
+    echo "'$1'"
+  else
+    echo "\"$1\""
+  fi
+}
+
+
+_history_command(){
+  if [[ ! -z $BASH_VERSION ]];
+  then
+    echo "history -s"
+  elif [[ ! -z $ZSH_VERSION ]];
+  then
+    echo "print -s"
+  fi
+
+  }
+
+_append_history(){
+  local command
+  for arg; do
+    local output=$(_escaped_string "$arg")
+    if [[ ! -z $command ]];
+    then
+      command="$command $output"
+    else
+      command="$output"
+    fi
+  done
+  $(_history_command) "$command"
 }

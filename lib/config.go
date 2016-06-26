@@ -6,7 +6,7 @@ import (
 
 // Config file struct
 type Config struct {
-	SnippetDir, Shell          string
+	SnippetDir                 string
 	ExecConfirm, AppendHistory bool
 }
 
@@ -19,7 +19,6 @@ func init() {
 //getConfig reads config and returns struct
 func getConfig() (c Config) {
 	c.SnippetDir = expandPath(viper.GetString("snippet_dir"))
-	c.Shell = viper.GetString("shell")
 	c.AppendHistory = viper.GetBool("append_history")
 	c.ExecConfirm = viper.GetBool("exec_confirm")
 	return c
