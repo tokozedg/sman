@@ -6,6 +6,11 @@ A command-line snippet manager in Go
 
 [![asciicast](https://asciinema.org/a/2e04fxybyyo5ubjk42mk4yuop.png)](https://asciinema.org/a/2e04fxybyyo5ubjk42mk4yuop)
 
+## Install
+
+```shell
+sh -c "$(curl https://raw.githubusercontent.com/tokozedg/sman/master/install.sh)"
+```
 
 ## Building
 
