@@ -84,6 +84,12 @@ func run(name string, inputs ...string) {
 		printlnError("Multiple snippets matched...")
 		os.Exit(1)
 	}
+
+	if len(inputs) > len(snippet.Placeholders) {
+		printlnError("You gave ", len(inputs), " argument(s), limit is ", len(snippet.Placeholders))
+		os.Exit(1)
+	}
+
 	snippet.SetInputs(inputs)
 	dashLineError()
 	if len(inputs) < len(snippet.Placeholders) {
