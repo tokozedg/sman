@@ -9,7 +9,7 @@ A command-line snippet manager in Go
 ## Install
 
 ```shell
-sh -c "$(curl https://raw.githubusercontent.com/tokozedg/sman/master/install.sh)"
+bash -c "$(curl https://raw.githubusercontent.com/tokozedg/sman/master/install.sh)"
 ```
 
 ## Building
