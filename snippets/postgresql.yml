@@ -1,0 +1,5 @@
+---
+postgresql:watch:
+  do: copy
+  desc: postgresql version of mysqladmin -i 2 proc
+  command: watch \"psql -P pager -c 'select datname,pid,usename,waiting,state,query from pg_stat_activity;' tasks\"
