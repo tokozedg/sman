@@ -1,0 +1,33 @@
+---
+aptitude:hold:
+  do: exec
+  desc: Hold package at the current version
+  command: sudo apt-mark hold <<package>>
+aptitude:install:
+  do: exec
+  desc: install a specific version of a package
+  command: sudo aptitude install <<package>>=<<version>>
+aptitude:release:
+  do: exec
+  desc: Release hold on a package
+  command: sudo apt-mark unhold <<package>>
+aptitude:search:
+  do: exec
+  desc: search for a package
+  command: aptitude search <<package>>
+aptitude:show:
+  do: exec
+  desc: show package information
+  command: aptitude show <<package>>
+aptitude:update:
+  do: exec
+  desc: Update local package database
+  command: sudo aptitude update
+aptitude:upgrade:
+  do: exec
+  desc: Update packages
+  command: sudo aptitude upgrade
+aptitude:versions:
+  do: exec
+  desc: show available versions of a package
+  command: sudo aptitude versions <<package>>

@@ -1,0 +1,10 @@
+---
+ufw:allow:
+  do: exec
+  desc: open port in ufw
+  command: sudo ufw allow proto <<protocol(tcp,udp)>> from <<source(any)#IP>> to any port <<port>>
+ufw:deny:
+  do: exec
+  desc: drop IP in ufw
+  command: sudo ufw deny <<interface(in on eth0)>> from <<IP>>
+
