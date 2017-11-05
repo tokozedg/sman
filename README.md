@@ -79,7 +79,7 @@ curl:upload:
 ### Run snippet
 
 ```bash
-s run [-f <FILE>]  [-t <TAG>] <SNIPPET> [placeholder values...] [-cxp]
+s run [-f <FILE>]  [-t <TAG>] <SNIPPET> [placeholder values...] [-cxyp]
 ```
 ```bash
 ~|⇒ s run -f shell curl:upload test.tar.gz -x
