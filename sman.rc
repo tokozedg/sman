@@ -2,9 +2,9 @@
 
 s() {
   if [[ ${1} == "run" ]] || [[ ${1} == "r" ]]; then
-    eval "$(sman $@)"
+    eval "$(sman "$@")"
   else
-    sman $@
+    sman "$@"
   fi
 }
 
