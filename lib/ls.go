@@ -2,7 +2,6 @@ package sman
 
 import (
 	"fmt"
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 	"os"
 	"regexp"
@@ -31,10 +30,9 @@ func doLs(pattern string) {
 	snippets = filterSnippets(pattern, snippets)
 	sort.Sort(snippets)
 	var prevFile string
-	blue := color.New(color.FgBlue).SprintFunc()
 	for _, s := range snippets {
 		if s.File != prevFile {
-			fmt.Fprintln(w, blue(s.File+":"))
+			fmt.Fprintln(w, c.LsFilesColor.SprintFunc()(s.File+":"))
 			prevFile = s.File
 		}
 		line := fmt.Sprintf("   %v\t[%v]\t%v", s.Name, displaySlice(s.Tags),

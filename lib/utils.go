@@ -6,6 +6,7 @@ import (
 	"github.com/fatih/color"
 	"os"
 	"strings"
+	"strconv"
 )
 
 // readFromCli reads CLI input and return string
@@ -57,6 +58,22 @@ func magenta(s string) string {
 func cyan(s string) string {
 	c := color.New(color.FgCyan).SprintFunc()
 	return c(s)
+}
+
+// convert a comma-separated string to color
+func parseColor(strValue string) *color.Color {
+	returnColor := color.New()
+	colorArray := strings.Split(strValue, ",")
+	for _, part := range colorArray {
+		integer, err := strconv.Atoi(part)
+		if err != nil {
+			printError("Error setting color: ")
+			printlnError(err)
+		} else {
+			returnColor.Add(color.Attribute(integer));
+		}
+	}
+	return returnColor
 }
 
 func choicePrompt(from []string) (result string) {
