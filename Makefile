@@ -31,7 +31,7 @@ build:
 	rm bin/sman-${GOOS}-${GOARCH}-${VERSION}
 
 test:
-		go -v test ./...
+		go test -v ./...
 
 watch:
 	CompileDaemon -command="go test -v ./..." -color=True --log-prefix=False --exclude-dir=.git
