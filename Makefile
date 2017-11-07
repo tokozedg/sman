@@ -1,5 +1,8 @@
 VERSION := $(shell awk -F= '/version =/ {print $$2}' lib/root.go | tr -d "\" ")
 
+test:
+		go test -v ./...
+
 all:
 	go build -v
 
@@ -29,9 +32,6 @@ build:
 	env GOOS=${GOOS} GOARCH=${GOARCH} go build -o bin/sman-${GOOS}-${GOARCH}-${VERSION}
 	cd bin; tar -czf sman-${GOOS}-${GOARCH}-${VERSION}.tgz sman-${GOOS}-${GOARCH}-${VERSION}
 	rm bin/sman-${GOOS}-${GOARCH}-${VERSION}
-
-test:
-		go test -v ./...
 
 watch:
 	CompileDaemon -command="go test -v ./..." -color=True --log-prefix=False --exclude-dir=.git
