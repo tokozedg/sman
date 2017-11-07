@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	copyFlag, execFlag, printFlag bool
+	copyFlag, execFlag, yesFlag, printFlag bool
 )
 
 func shellString(s string) string {
@@ -113,12 +113,13 @@ func run(name string, inputs ...string) {
 		printlnError("Snippet Copied...")
 	}
 	if execFlag || (!copyFlag && snippet.Do == "exec") {
-		execute(snippet.Command, c.ExecConfirm)
+		confirmNeeded := !yesFlag && c.ExecConfirm
+		execute(snippet.Command, confirmNeeded)
 	}
 }
 
 var runCmd = &cobra.Command{
-	Use:     "run [-f FILE] [-f TAG] SNIPPET [PLACEHOLDER VALUES...] [-cxp]",
+	Use:     "run [-f FILE] [-f TAG] SNIPPET [PLACEHOLDER VALUES...] [-cxyp]",
 	Aliases: []string{"r"},
 	Short:   "Run snippet",
 	Long: `
@@ -147,5 +148,6 @@ func init() {
 	RootCmd.SetOutput(os.Stderr)
 	runCmd.Flags().BoolVarP(&copyFlag, "copy", "c", false, "copy snippet")
 	runCmd.Flags().BoolVarP(&execFlag, "exec", "x", false, "execute snippet")
+	runCmd.Flags().BoolVarP(&yesFlag, "yes", "y", false, "skip confirmation when executing")
 	runCmd.Flags().BoolVarP(&printFlag, "print", "p", false, "print snippet")
 }
