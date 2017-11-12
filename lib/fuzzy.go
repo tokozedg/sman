@@ -3,6 +3,7 @@ package sman
 import (
 	"github.com/renstrom/fuzzysearch/fuzzy"
 	"sort"
+	"strings"
 )
 
 // topsFromRanks iterates through fuzzy.Ranks and returns results
@@ -31,19 +32,26 @@ func fSearchFileName(pattern string, dir string) (matched []string) {
 }
 
 // fSearchSnippet matches pattern to snippet name in SnippetSlice
-// returnes SnippetSlice of best matched snippets.
+// returns SnippetSlice of best matched snippets.
 func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
 	topRank := -1
 	for _, s := range snippets {
-		r := fuzzy.RankMatch(pattern, s.Name)
-		switch {
-		case r == -1:
-			continue
-		case topRank == -1 || r < topRank:
-			matched = SnippetSlice{s}
-			topRank = r
-		case r == topRank:
-			matched = append(matched, s)
+		var queries []string
+		if strings.Contains(s.Name, ":") {
+			queries = strings.Split(s.Name, ":")
+		}
+		queries = append(queries, s.Name)
+		for _, part := range queries {
+			r := fuzzy.RankMatch(pattern, part)
+			switch {
+			case r == -1:
+				continue
+			case topRank == -1 || r < topRank:
+				matched = SnippetSlice{s}
+				topRank = r
+			case r == topRank:
+				matched = append(matched, s)
+			}
 		}
 	}
 	return matched

@@ -64,6 +64,37 @@ func TestFSearchSnippet(t *testing.T) {
 				Snippet{Name: "firbe"},
 			},
 		},
+		{"multiple matched subtasks",
+			SnippetSlice{
+				Snippet{Name: "user:add"},
+				Snippet{Name: "alias:add"},
+				Snippet{Name: "non:match"},
+			}, "add",
+			SnippetSlice{
+				Snippet{Name: "user:add"},
+				Snippet{Name: "alias:add"},
+			},
+		},
+		{"single matched fully qualified",
+			SnippetSlice{
+				Snippet{Name: "user:add"},
+				Snippet{Name: "alias:add"},
+				Snippet{Name: "non:match"},
+			}, "alias:add",
+			SnippetSlice{
+				Snippet{Name: "alias:add"},
+			},
+		},
+		{"single matched fuzzy fully qualified",
+			SnippetSlice{
+				Snippet{Name: "user:add"},
+				Snippet{Name: "alias:add"},
+				Snippet{Name: "non:match"},
+			}, "als:dd",
+			SnippetSlice{
+				Snippet{Name: "alias:add"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		if gotMatched := fSearchSnippet(tt.snippets, tt.pattern); !reflect.DeepEqual(gotMatched, tt.wantMatched) {
