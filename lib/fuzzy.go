@@ -36,12 +36,7 @@ func fSearchFileName(pattern string, dir string) (matched []string) {
 func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
 	topRank := -1
 	for _, s := range snippets {
-		var queries []string
-		if strings.Contains(s.Name, ":") {
-			queries = strings.Split(s.Name, ":")
-		}
-		queries = append(queries, s.Name)
-		for _, part := range queries {
+		for _, part := range nameCombinations(s.Name) {
 			r := fuzzy.RankMatch(pattern, part)
 			switch {
 			case r == -1:
@@ -55,4 +50,32 @@ func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice
 		}
 	}
 	return matched
+}
+
+// construct name combinations using ':' as separator of name parts
+// ex: 1:2:3 -> [1, 2, 3, 1:2, 2:3, 1:2:3]
+func nameCombinations(pattern string) (combinations []string) {
+	if len(pattern) > 0 {
+		if strings.Contains(pattern, ":") {
+			singleNames := strings.Split(pattern, ":")
+
+			// single names
+			combinations = append(combinations, singleNames...)
+
+			// combinations with length 2 to n-1
+			for combLength := 2; combLength < len(singleNames); combLength++ {
+				for startAt := 0; startAt < len(singleNames)-combLength+1; startAt++ {
+					var combination []string
+					for idx := startAt; idx < startAt+combLength; idx++ {
+						combination = append(combination, singleNames[idx])
+					}
+					combinations = append(combinations, strings.Join(combination, ":"))
+				}
+			}
+		}
+
+		// complete name
+		combinations = append(combinations, pattern)
+	}
+	return
 }
