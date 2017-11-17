@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"sort"
 	"text/tabwriter"
+	"io"
 )
 
 func filterSnippets(p string, slice SnippetSlice) (matched SnippetSlice) {
@@ -25,9 +26,14 @@ func filterSnippets(p string, slice SnippetSlice) (matched SnippetSlice) {
 func doLs(pattern string) {
 	c := getConfig()
 	snippets := getSnippets(pattern, fileFlag, c.SnippetDir, tagFlag)
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 25, 2, 0, ' ', 0)
 	snippets = filterSnippets(pattern, snippets)
+	doLsSlice(snippets, os.Stdout)
+}
+
+func doLsSlice(snippets SnippetSlice, output io.Writer) {
+	c := getConfig()
+	w := new(tabwriter.Writer)
+	w.Init(output, 25, 2, 0, ' ', 0)
 	sort.Sort(snippets)
 	var prevFile string
 	for _, s := range snippets {

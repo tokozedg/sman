@@ -82,6 +82,7 @@ func run(name string, inputs ...string) {
 		snippet = matchedSnippets[0]
 	default:
 		printlnError("Multiple snippets matched...")
+		doLsSlice(matchedSnippets, os.Stderr)
 		os.Exit(1)
 	}
 
