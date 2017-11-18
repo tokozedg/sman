@@ -157,3 +157,13 @@ func (s SnippetSlice) Less(a, b int) bool {
 func (s SnippetSlice) Swap(a, b int) {
 	s[a], s[b] = s[b], s[a]
 }
+
+// filter input by test function and return new slice with matched snippets
+func (ss SnippetSlice) FilterView(test func(Snippet) bool) (ret SnippetSlice) {
+	for _, s := range ss {
+		if test(s) {
+			ret = append(ret, s)
+		}
+	}
+	return
+}

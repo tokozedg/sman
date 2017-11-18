@@ -107,6 +107,16 @@ func TestFSearchSnippet(t *testing.T) {
 				Snippet{Name: "system:user:add"},
 			},
 		},
+		{"single matched fully qualified special case when whole match applies",
+			SnippetSlice{
+				Snippet{Name: "project:build"},
+				Snippet{Name: "project:build:full"},
+				Snippet{Name: "non:match"},
+			}, "project:build",
+			SnippetSlice{
+				Snippet{Name: "project:build"},
+			},
+		},
 	}
 	for _, tt := range tests {
 		if gotMatched := fSearchSnippet(tt.snippets, tt.pattern); !reflect.DeepEqual(gotMatched, tt.wantMatched) {

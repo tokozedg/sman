@@ -34,6 +34,13 @@ func fSearchFileName(pattern string, dir string) (matched []string) {
 // fSearchSnippet matches pattern to snippet name in SnippetSlice
 // returns SnippetSlice of best matched snippets.
 func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
+	// special case handling if pattern == snippet name
+	wholeNameMatchTest := func(s Snippet) bool { return s.Name == pattern }
+	wholeNameMatch := snippets.FilterView(wholeNameMatchTest)
+	if wholeNameMatch.Len() == 1 {
+		return wholeNameMatch
+	}
+
 	topRank := -1
 	for _, s := range snippets {
 		for _, part := range nameCombinations(s.Name) {
