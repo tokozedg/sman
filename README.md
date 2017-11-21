@@ -110,6 +110,23 @@ s ls [-f <FILE>] [-t <TAG>] [<PATTERN>]
 
 * Pattern is matched against snippet name, command and description
 
+### List and search snippets for scripts
+
+* Use the `--porcelain` flag to produce machine-readable output for scripting.
+
+```bash
+$ s ls service:disable --porcelain
+shell	service:disable	ubuntu	disable service on ubuntu
+
+$ s ls add --porcelain | cut -f 2 | xargs echo
+vhost:add user:add alias:add sshconfig:add user:group
+```
+
+* The output is `\t`-separated. The colums are:
+ 1. Snippet file
+ 2. Snippet name
+ 3. Tags (`,`-separated)
+ 4. Description
 
 ## Fuzzy search file and snippet name:
 ```bash
