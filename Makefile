@@ -29,9 +29,9 @@ darwin_amd64: GOARCH=amd64
 darwin_amd64: build
 
 build:
-	env GOOS=${GOOS} GOARCH=${GOARCH} go build -o bin/sman-${GOOS}-${GOARCH}-${VERSION}
-	cd bin; tar -czf sman-${GOOS}-${GOARCH}-${VERSION}.tgz sman-${GOOS}-${GOARCH}-${VERSION}
-	rm bin/sman-${GOOS}-${GOARCH}-${VERSION}
+	env GOOS=${GOOS} GOARCH=${GOARCH} go build -o bin/sman-${GOOS}-${GOARCH}-v${VERSION}
+	cd bin; tar -czf sman-${GOOS}-${GOARCH}-v${VERSION}.tgz sman-${GOOS}-${GOARCH}-v${VERSION}
+	rm bin/sman-${GOOS}-${GOARCH}-v${VERSION}
 
 watch:
 	CompileDaemon -command="go test -v ./..." -color=True --log-prefix=False --exclude-dir=.git

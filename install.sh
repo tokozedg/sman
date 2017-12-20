@@ -2,7 +2,7 @@
 
 #code from junegunn/fzf
 
-version=1.0.0
+version="v1.0.0"
 
 download() {
     if [ ! -d ~/.sman/ ]; then
@@ -16,6 +16,7 @@ download() {
     [ -d ~/.sman/bin ] || mkdir ~/.sman/bin;
     cd ~/.sman/bin
     local url=https://github.com/tokozedg/sman/releases/download/$version/${1}.tgz
+    echo $url
     if command -v curl > /dev/null; then
         curl -fL $url | tar -xz
     elif command -v wget > /dev/null; then
@@ -26,7 +27,7 @@ download() {
     fi
 
     if [ ! -f $1 ]; then
-        binary_error="Failed to download ${1}"
+        binary_error="Failed to download ${url}"
         return
     fi
 
